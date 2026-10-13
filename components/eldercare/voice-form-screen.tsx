@@ -46,8 +46,10 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
     if (result.error) {
       setError(result.error)
       setSaving(false)
+      window.alert(result.error)
       return
     }
+    setSaving(false)
     onNext()
   }
 

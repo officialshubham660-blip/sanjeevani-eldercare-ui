@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { createClient, getSupabaseHost } from '@/lib/supabase/client'
 
 export type RegistrationMode = 'manual' | 'voice'
 
@@ -36,16 +36,23 @@ export async function registerUser(input: RegistrationInput): Promise<{ error: s
   if (!/^[0-9]{10}$/.test(mobileNumber)) return { error: 'Please enter a valid 10-digit mobile number.' }
   if (!dateOfBirth) return { error: 'Please enter a valid date of birth as DD/MM/YYYY.' }
 
-  const { error } = await createClient().from('users').insert({
-    full_name: fullName,
-    mobile_number: mobileNumber,
-    date_of_birth: dateOfBirth,
-    mode: input.mode,
-  })
+  try {
+    const { error, status } = await createClient().from('users').insert({
+      full_name: fullName,
+      mobile_number: mobileNumber,
+      date_of_birth: dateOfBirth,
+      mode: input.mode,
+    })
 
-  if (error) {
-    console.error('Registration failed:', error.message)
-    return { error: 'We could not save your details. Please try again.' }
+    if (error) {
+      console.error(`Supabase insert into users failed (${getSupabaseHost()}, HTTP ${status}):`, error)
+      return { error: `Could not save your details: ${error.message}${error.code ? ` (code ${error.code})` : ''}` }
+    }
+    console.log(`Supabase insert into users succeeded (${getSupabaseHost()}, HTTP ${status})`)
+    return { error: null }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`Supabase request to ${getSupabaseHost()} threw:`, err)
+    return { error: `Could not reach the database: ${message}` }
   }
-  return { error: null }
 }
