@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, CalendarDays, Mic, Square } from 'lucide-react'
+import { ArrowLeft, CalendarDays, Loader2, Mic, Square } from 'lucide-react'
+import { registerUser, type RegistrationMode } from '@/lib/register-user'
 
 const WAVE_BARS = [10, 22, 34, 18, 40, 26, 14, 36, 20, 30, 12, 24]
 
@@ -13,12 +14,41 @@ type Props = {
 export function VoiceFormScreen({ onBack, onNext }: Props) {
   const [listening, setListening] = useState(false)
   const [form, setForm] = useState({ name: '', mobile: '', dob: '' })
+  const [mode, setMode] = useState<RegistrationMode>('manual')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   function toggleListening() {
     if (listening) {
       setForm({ name: 'Shanti Devi', mobile: '9874563210', dob: '10/05/1958' })
+      setMode('voice')
     }
     setListening((v) => !v)
+  }
+
+  function updateField(field: keyof typeof form, value: string) {
+    setForm((f) => ({ ...f, [field]: value }))
+    setMode('manual')
+    setError(null)
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (saving) return
+    setSaving(true)
+    setError(null)
+    const result = await registerUser({
+      fullName: form.name,
+      mobileNumber: form.mobile,
+      dateOfBirth: form.dob,
+      mode,
+    })
+    if (result.error) {
+      setError(result.error)
+      setSaving(false)
+      return
+    }
+    onNext()
   }
 
   return (
@@ -82,10 +112,8 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
 
       <form
         className="flex flex-col gap-5"
-        onSubmit={(e) => {
-          e.preventDefault()
-          onNext()
-        }}
+        onSubmit={handleSubmit}
+        aria-busy={saving}
       >
         <Field label="Full Name" id="full-name">
           <input
@@ -93,7 +121,7 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
             autoComplete="name"
             required
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            onChange={(e) => updateField('name', e.target.value)}
             placeholder="Enter your name"
             className={inputClass}
           />
@@ -108,7 +136,7 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
             required
             pattern="[0-9]{10}"
             value={form.mobile}
-            onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+            onChange={(e) => updateField('mobile', e.target.value)}
             placeholder="Enter mobile number"
             className={inputClass}
           />
@@ -121,7 +149,7 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
               inputMode="numeric"
               required
               value={form.dob}
-              onChange={(e) => setForm({ ...form, dob: e.target.value })}
+              onChange={(e) => updateField('dob', e.target.value)}
               placeholder="DD / MM / YYYY"
               className={`${inputClass} pr-14`}
             />
@@ -132,11 +160,25 @@ export function VoiceFormScreen({ onBack, onNext }: Props) {
           </div>
         </Field>
 
+        {error && (
+          <p role="alert" className="rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 text-lg font-semibold text-red-700">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="mt-2 min-h-16 rounded-2xl bg-[#1b7a4b] text-xl font-bold text-white shadow-md hover:bg-[#156239] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1b7a4b]/40"
+          disabled={saving}
+          className="mt-2 flex min-h-16 items-center justify-center gap-3 rounded-2xl bg-[#1b7a4b] text-xl font-bold text-white shadow-md hover:bg-[#156239] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1b7a4b]/40 disabled:cursor-not-allowed disabled:opacity-80"
         >
-          Next
+          {saving ? (
+            <>
+              <Loader2 className="size-7 animate-spin" aria-hidden="true" />
+              <span>Saving…</span>
+            </>
+          ) : (
+            'Next'
+          )}
         </button>
       </form>
     </main>
