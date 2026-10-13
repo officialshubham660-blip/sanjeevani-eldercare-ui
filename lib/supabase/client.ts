@@ -1,20 +1,14 @@
-import { createClient as createSupabaseClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-const FALLBACK_SUPABASE_URL = 'https://vgvpnzqxitipmytjju.supabase.co'
-const FALLBACK_SUPABASE_KEY = 'sb_publishable_J3TdVf4rc48VMdEvQbFRaA_k0uSHY_M'
+const SUPABASE_URL = 'https://vgvpnzqxitipmytjju.supabase.co'
+const SUPABASE_ANON_KEY = 'sb_publishable_J3TdVf4rc48VMdEvQbFRaA_kOuSHY_M'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || FALLBACK_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || FALLBACK_SUPABASE_KEY
-
-let client: SupabaseClient | undefined
+export const supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export function createClient() {
-  if (!client) {
-    client = createSupabaseClient(supabaseUrl, supabaseKey)
-  }
-  return client
+  return supabase
 }
 
 export function getSupabaseHost() {
-  return new URL(supabaseUrl).host
+  return new URL(SUPABASE_URL).host
 }
