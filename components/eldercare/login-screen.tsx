@@ -4,12 +4,97 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Phone, UserCheck, Heart } from 'lucide-react';
 
 interface LoginScreenProps {
+  language: string;
   onLoginSuccess: () => void;
   onGoToRegister: () => void;
   onContinueGuest: () => void;
 }
 
+const COPY: Record<
+  string,
+  {
+    title: string;
+    subtitle: string;
+    labelId: string;
+    placeholderId: string;
+    labelPass: string;
+    placeholderPass: string;
+    signUp: string;
+    showPassword: string;
+    hidePassword: string;
+    or: string;
+    guest: string;
+    hasAccount: string;
+    loginLink: string;
+  }
+> = {
+  en: {
+    title: 'Create Account',
+    subtitle:
+      'Sign up for your Sanjeevani account to stay healthy and connected',
+    labelId: 'Mobile Number or Email',
+    placeholderId: 'Enter mobile number or email',
+    labelPass: 'Set Password',
+    placeholderPass: 'Create password',
+    signUp: 'Sign Up',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
+    or: 'OR',
+    guest: 'Continue as Guest',
+    hasAccount: 'Already have an account?',
+    loginLink: 'Login here',
+  },
+  hi: {
+    title: 'खाता बनाएँ',
+    subtitle: 'स्वस्थ और जुड़े रहने के लिए अपना संजीवनी खाता बनाएँ',
+    labelId: 'मोबाइल नंबर या ईमेल',
+    placeholderId: 'मोबाइल नंबर या ईमेल दर्ज करें',
+    labelPass: 'पासवर्ड सेट करें',
+    placeholderPass: 'पासवर्ड बनाएँ',
+    signUp: 'साइन अप करें',
+    showPassword: 'पासवर्ड दिखाएँ',
+    hidePassword: 'पासवर्ड छिपाएँ',
+    or: 'या',
+    guest: 'गेस्ट के रूप में जारी रखें',
+    hasAccount: 'क्या आपका पहले से खाता है?',
+    loginLink: 'यहाँ लॉगिन करें',
+  },
+  mr: {
+    title: 'खाते तयार करा',
+    subtitle:
+      'निरोगी आणि संपर्कात राहण्यासाठी तुमचे संजीवनी खाते तयार करा',
+    labelId: 'मोबाइल नंबर किंवा ईमेल',
+    placeholderId: 'मोबाइल नंबर किंवा ईमेल टाका',
+    labelPass: 'पासवर्ड सेट करा',
+    placeholderPass: 'पासवर्ड तयार करा',
+    signUp: 'साइन अप करा',
+    showPassword: 'पासवर्ड दाखवा',
+    hidePassword: 'पासवर्ड लपवा',
+    or: 'किंवा',
+    guest: 'पाहुणे म्हणून पुढे जा',
+    hasAccount: 'तुमचे खाते आधीपासून आहे का?',
+    loginLink: 'येथे लॉगिन करा',
+  },
+  bn: {
+    title: 'অ্যাকাউন্ট তৈরি করুন',
+    subtitle:
+      'সুস্থ ও সংযুক্ত থাকতে আপনার সঞ্জীবনী অ্যাকাউন্টে সাইন আপ করুন',
+    labelId: 'মোবাইল নম্বর বা ইমেল',
+    placeholderId: 'মোবাইল নম্বর বা ইমেল লিখুন',
+    labelPass: 'পাসওয়ার্ড সেট করুন',
+    placeholderPass: 'পাসওয়ার্ড তৈরি করুন',
+    signUp: 'সাইন আপ করুন',
+    showPassword: 'পাসওয়ার্ড দেখান',
+    hidePassword: 'পাসওয়ার্ড লুকান',
+    or: 'অথবা',
+    guest: 'অতিথি হিসেবে চালিয়ে যান',
+    hasAccount: 'আপনার কি আগে থেকেই অ্যাকাউন্ট আছে?',
+    loginLink: 'এখানে লগইন করুন',
+  },
+};
+
 export function LoginScreen({
+  language,
   onLoginSuccess,
   onGoToRegister,
   onContinueGuest,
@@ -18,17 +103,23 @@ export function LoginScreen({
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+  const t = COPY[language] ?? COPY.hi;
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (!identifier.trim() || !password.trim()) return;
 
     try {
       localStorage.setItem(
         'user_session',
-        JSON.stringify({ user: identifier, loggedInAt: Date.now() })
+        JSON.stringify({
+          user: identifier,
+          loggedInAt: Date.now(),
+        })
       );
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
 
     onLoginSuccess();
@@ -42,8 +133,12 @@ export function LoginScreen({
             <Heart className="size-5 fill-current" />
           </div>
           <div>
-            <h1 className="text-base font-black text-slate-900 leading-tight">Sanjeevani</h1>
-            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">ElderCare+</p>
+            <h1 className="text-base font-black text-slate-900 leading-tight">
+              Sanjeevani
+            </h1>
+            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
+              ElderCare+
+            </p>
           </div>
         </div>
       </header>
@@ -58,19 +153,26 @@ export function LoginScreen({
 
         <form onSubmit={handleLogin} className="space-y-4 pt-2">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              Mobile Number or Email
+            <label
+              htmlFor="signup-identifier"
+              className="block text-xs font-bold text-slate-700 mb-1"
+            >
+              {t.labelId}
             </label>
             <div className="relative">
               <input
+                id="signup-identifier"
                 type="text"
                 required
-                placeholder="Enter mobile number or email"
+                placeholder={t.placeholderId}
                 value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                onChange={(event) => setIdentifier(event.target.value)}
                 className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs"
               />
-              <Phone className="absolute right-3.5 top-3.5 size-4 text-slate-400" />
+              <Phone
+                aria-hidden="true"
+                className="absolute right-3.5 top-3.5 size-4 text-slate-400"
+              />
             </div>
           </div>
 
@@ -78,45 +180,50 @@ export function LoginScreen({
             <label className="block text-xs font-bold text-slate-700 mb-1">Set Password</label>
             <div className="relative">
               <input
+                id="signup-password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 placeholder="Create password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs"
+                onChange={(event) => setPassword(event.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 pr-11 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 rounded-lg p-1 text-slate-400 hover:text-slate-600"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? t.hidePassword : t.showPassword}
+                className="absolute right-3 top-3 rounded-lg p-1 text-slate-500 hover:bg-slate-100"
               >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                {showPassword ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4" />
+                )}
               </button>
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-emerald-700 py-3.5 text-xs font-black text-white shadow-md hover:bg-emerald-800 active:scale-98 transition-all tracking-wide"
+            className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-md transition-colors hover:bg-emerald-700 active:scale-[0.99]"
           >
             Sign Up
           </button>
         </form>
 
-        <div className="relative flex items-center justify-center py-1">
-          <div className="w-full border-t border-slate-200" />
-          <span className="absolute bg-[#f8fafc] px-3 text-[11px] font-bold text-slate-400">
-            OR
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-slate-200" />
+          <span className="text-[11px] font-bold text-slate-400">{t.or}</span>
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
 
         <button
           type="button"
           onClick={onContinueGuest}
-          className="w-full rounded-xl border border-slate-300 bg-white py-3 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 active:scale-98 transition-all flex items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.99]"
         >
-          <UserCheck className="size-4 text-emerald-700" />
-          Continue as Guest
+          <UserCheck className="size-4" />
+          {t.guest}
         </button>
 
         <div className="text-center pt-2">

@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowLeft,
   CheckCircle,
   Pill,
   ShieldAlert,
   Volume2,
-  Calendar,
   Sparkles,
 } from 'lucide-react';
 import {
@@ -21,6 +20,30 @@ interface PrescriptionResultScreenProps {
   onSaveToCabinet: () => void;
   language: string;
 }
+
+const getMedicineCandidate = (text: string) => {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.replace(/[|_]/g, ' ').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+
+  const doseLine = lines.find((line) =>
+    /\b\d+(?:\.\d+)?\s*(mg|mcg|g|ml|µg)\b/i.test(line)
+  );
+
+  if (doseLine) return doseLine;
+
+  const usefulLine = lines.find(
+    (line) =>
+      /[a-zA-Z]/.test(line) &&
+      line.length >= 3 &&
+      !/\b(batch|lot|mfg|manufactured|expiry|exp|mrp|price|tablet|tablets|capsule|capsules|composition|each)\b/i.test(
+        line
+      )
+  );
+
+  return usefulLine ?? '';
+};
 
 export function PrescriptionResultScreen({
   scanMode = 'strip_expiry',
@@ -195,6 +218,12 @@ export function PrescriptionResultScreen({
               <Volume2 className="size-4" />
               {isEn ? 'Listen to Warning Again' : 'चेतावनी फिर से सुनें'}
             </button>
+
+            <p className="text-[11px] leading-relaxed text-red-800">
+              {isEn
+                ? 'This is an automated demo check, not medical advice. Confirm with a doctor or pharmacist.'
+                : 'यह स्वचालित डेमो जाँच है, चिकित्सा सलाह नहीं। डॉक्टर या फार्मासिस्ट से पुष्टि करें।'}
+            </p>
           </div>
         )}
 
@@ -215,6 +244,11 @@ export function PrescriptionResultScreen({
               </div>
             ))}
           </div>
+          <p className="text-[11px] leading-relaxed text-amber-700">
+            {isEn
+              ? 'These are sample medicines in the current demo, not your actual cabinet list.'
+              : 'ये मौजूदा डेमो की नमूना दवाइयाँ हैं, आपकी असली दवा-अलमारी की सूची नहीं।'}
+          </p>
         </div>
 
         <div className="pt-2 space-y-2">

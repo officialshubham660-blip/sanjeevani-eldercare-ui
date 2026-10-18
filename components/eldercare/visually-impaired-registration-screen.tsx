@@ -1,52 +1,128 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Mic, Keyboard, PhoneCall, CheckCircle2, ShieldCheck } from 'lucide-react';
+import {
+  ArrowLeft,
+  Mic,
+  Keyboard,
+  PhoneCall,
+  CheckCircle2,
+  ShieldCheck,
+} from 'lucide-react';
 import { Logo } from './logo';
 
 interface VisuallyImpairedRegistrationProps {
+  language: string;
   onBack: () => void;
   onContinue: (mode: 'voice' | 'text') => void;
 }
 
+const COPY: Record<
+  string,
+  {
+    back: string;
+    audience: string;
+    title: string;
+    description: string;
+    voice: string;
+    speakDetails: string;
+    text: string;
+    typeDetails: string;
+    help: string;
+    continue: string;
+    compatible: string;
+  }
+> = {
+  en: {
+    back: 'Back',
+    audience: 'For Visually Impaired',
+    title: 'Create Your Account',
+    description: 'We have made this simple and accessible for you.',
+    voice: 'Voice Input',
+    speakDetails: 'Speak your details',
+    text: 'Text Input',
+    typeDetails: 'Type your details',
+    help: 'Need Help? Call Support',
+    continue: 'Continue',
+    compatible: 'Screen reader and audio narration compatible',
+  },
+  hi: {
+    back: 'वापस',
+    audience: 'दृष्टिबाधित लोगों के लिए',
+    title: 'अपना खाता बनाएँ',
+    description: 'हमने इसे आपके लिए आसान और सुलभ बनाया है।',
+    voice: 'आवाज़ से जानकारी दें',
+    speakDetails: 'अपनी जानकारी बोलें',
+    text: 'लिखकर जानकारी दें',
+    typeDetails: 'अपनी जानकारी टाइप करें',
+    help: 'मदद चाहिए? सहायता केंद्र पर कॉल करें',
+    continue: 'आगे बढ़ें',
+    compatible: 'स्क्रीन रीडर और ऑडियो वर्णन के अनुकूल',
+  },
+  mr: {
+    back: 'मागे',
+    audience: 'दृष्टिहीन व्यक्तींसाठी',
+    title: 'तुमचे खाते तयार करा',
+    description: 'आम्ही हे तुमच्यासाठी सोपे आणि सुलभ केले आहे.',
+    voice: 'आवाजाने माहिती द्या',
+    speakDetails: 'तुमची माहिती बोला',
+    text: 'मजकूर इनपुट',
+    typeDetails: 'तुमची माहिती टाइप करा',
+    help: 'मदत हवी आहे? सहाय्य सेवेला कॉल करा',
+    continue: 'पुढे जा',
+    compatible: 'स्क्रीन रीडर आणि ऑडिओ मार्गदर्शनासाठी अनुकूल',
+  },
+  bn: {
+    back: 'ফিরে যান',
+    audience: 'দৃষ্টিপ্রতিবন্ধী ব্যক্তিদের জন্য',
+    title: 'আপনার অ্যাকাউন্ট তৈরি করুন',
+    description: 'আমরা এটি আপনার জন্য সহজ ও ব্যবহারযোগ্য করেছি।',
+    voice: 'কণ্ঠে তথ্য দিন',
+    speakDetails: 'আপনার তথ্য বলুন',
+    text: 'লিখে তথ্য দিন',
+    typeDetails: 'আপনার তথ্য টাইপ করুন',
+    help: 'সাহায্য দরকার? সহায়তা কেন্দ্রে ফোন করুন',
+    continue: 'এগিয়ে যান',
+    compatible: 'স্ক্রিন রিডার ও অডিও নির্দেশনার উপযোগী',
+  },
+};
+
 export function VisuallyImpairedRegistrationScreen({
+  language,
   onBack,
   onContinue,
 }: VisuallyImpairedRegistrationProps) {
   const [selectedMode, setSelectedMode] = useState<'voice' | 'text'>('voice');
+  const t = COPY[language] ?? COPY.hi;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fafc] text-slate-800 pb-10 select-none">
-      {/* Top Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-xs">
         <button
           type="button"
           onClick={onBack}
+          aria-label={t.back}
+          title={t.back}
           className="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
-          title="Back"
         >
           <ArrowLeft className="size-5" />
         </button>
 
         <Logo size="sm" />
-
         <div className="w-10" />
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 max-w-md mx-auto w-full px-5 pt-6 space-y-6">
-        {/* Title Section */}
         <div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-            <span>For Visually Impaired</span>
+            <span>{t.audience}</span>
           </div>
-          <h2 className="text-xl font-black text-slate-900 mt-1">Create Your Account</h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            We've made this simple and accessible for you.
-          </p>
+          <h2 className="text-xl font-black text-slate-900 mt-1">
+            {t.title}
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">{t.description}</p>
         </div>
 
-        {/* Hero Accessibility Icon */}
         <div className="flex justify-center py-2">
           <div className="flex size-24 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg shadow-blue-500/20">
             <svg
@@ -57,6 +133,7 @@ export function VisuallyImpairedRegistrationScreen({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <circle cx="12" cy="4" r="2" />
               <path d="m18 19 1-7-6 1" />
@@ -67,9 +144,7 @@ export function VisuallyImpairedRegistrationScreen({
           </div>
         </div>
 
-        {/* Mode Selector Cards */}
         <div className="space-y-3 pt-2">
-          {/* 1. Voice Input Option */}
           <button
             type="button"
             onClick={() => setSelectedMode('voice')}
@@ -90,8 +165,12 @@ export function VisuallyImpairedRegistrationScreen({
                 <Mic className="size-6" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-slate-900">Voice Input</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Speak your details</p>
+                <h4 className="text-sm font-black text-slate-900">
+                  {t.voice}
+                </h4>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.speakDetails}
+                </p>
               </div>
             </div>
 
@@ -100,7 +179,6 @@ export function VisuallyImpairedRegistrationScreen({
             )}
           </button>
 
-          {/* 2. Text Input Option */}
           <button
             type="button"
             onClick={() => setSelectedMode('text')}
@@ -121,8 +199,12 @@ export function VisuallyImpairedRegistrationScreen({
                 <Keyboard className="size-6" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-slate-900">Text Input</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Type your details</p>
+                <h4 className="text-sm font-black text-slate-900">
+                  {t.text}
+                </h4>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t.typeDetails}
+                </p>
               </div>
             </div>
 
@@ -132,29 +214,27 @@ export function VisuallyImpairedRegistrationScreen({
           </button>
         </div>
 
-        {/* Helpline Support Button */}
         <div className="pt-2">
           <a
             href="tel:14567"
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 transition-colors"
           >
             <PhoneCall className="size-4 text-emerald-600" />
-            Need Help? Call Support
+            {t.help}
           </a>
         </div>
 
-        {/* Continue Action Button */}
         <button
           type="button"
           onClick={() => onContinue(selectedMode)}
           className="w-full rounded-xl bg-emerald-700 py-3.5 text-xs font-black text-white shadow-md hover:bg-emerald-800 active:scale-98 transition-all tracking-wide"
         >
-          Continue
+          {t.continue}
         </button>
 
         <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-400">
           <ShieldCheck className="size-4 text-emerald-600" />
-          <span>Screen reader & audio narration compatible</span>
+          <span>{t.compatible}</span>
         </div>
       </main>
     </div>

@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Layers, ChevronDown, ChevronUp, Bell, Activity, Mic } from 'lucide-react';
+import {
+  Layers,
+  ChevronDown,
+  ChevronUp,
+  Bell,
+  Activity,
+  Mic,
+} from 'lucide-react';
 import { TalkBackProvider, useTalkBack } from './talkback-provider';
 import { MedicineAlarmModal } from './medicine-alarm-modal';
 import { FallDetectionModal } from './fall-detection-modal';
@@ -23,7 +30,10 @@ import {
 } from './appointments-screen';
 import { WaterTrackerScreen } from './water-tracker-screen';
 import { DailyWellbeingScreen } from './daily-wellbeing-screen';
-import { FamilyHubScreen } from './family-hub-screen';
+import {
+  FamilyHubScreen,
+  type EmergencyContact,
+} from './family-hub-screen';
 import { SosEmergencyScreen } from './sos-emergency-screen';
 
 const SCREENS = [

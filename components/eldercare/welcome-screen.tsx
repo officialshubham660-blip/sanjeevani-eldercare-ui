@@ -5,6 +5,8 @@ import { Heart, Volume2, Globe, ArrowRight, ShieldCheck, Sparkles, UserCheck } f
 import { Logo } from './logo';
 
 interface WelcomeScreenProps {
+  language: string;
+  setLanguage: (lang: string) => void;
   onSelectElderly: () => void;
   onSelectVisuallyImpaired: () => void;
 }
@@ -17,10 +19,11 @@ const LANGUAGES = [
 ];
 
 export function WelcomeScreen({
+  language,
+  setLanguage,
   onSelectElderly,
   onSelectVisuallyImpaired,
 }: WelcomeScreenProps) {
-  const [selectedLang, setSelectedLang] = useState('hi');
   const [fontScale, setFontScale] = useState(1);
 
   const t = {
@@ -31,9 +34,9 @@ export function WelcomeScreen({
       langTitle: 'अपनी भाषा चुनें (Choose Language)',
       modeTitle: 'आप ऐप का उपयोग कैसे करना चाहते हैं?',
       seniorBtnTitle: 'सीनियर सिटिजन मोड',
-      seniorBtnSub: 'बड़े अक्षर, सरल डैशबोर्ड, दवाई और डॉक्टर की याद दिलाने वाला',
-      voiceBtnTitle: 'आवाज़ / वॉइस-असिस्टेंट मोड',
-      voiceBtnSub: 'कम दृष्टि या बिना पढ़े सिर्फ बोलकर उपयोग करने के लिए',
+      seniorBtnSub: 'बड़े अक्षर, सरल डैशबोर्ड, दवाई और डॉक्टर की याद दिलाने वाला',
+      voiceBtnTitle: 'आवाज़ / वॉइस-असिस्टेंट मोड',
+      voiceBtnSub: 'कम दृष्टि या बिना पढ़े सिर्फ बोलकर उपयोग करने के लिए',
       secureNote: '100% सुरक्षित और उपयोग में आसान',
     },
     en: {
@@ -72,7 +75,7 @@ export function WelcomeScreen({
       voiceBtnSub: 'কথা বলে সহজে ব্যবহার করার জন্য',
       secureNote: '১০০% নিরাপদ এবং ব্যবহার করা সহজ',
     },
-  }[selectedLang as 'hi' | 'en' | 'mr' | 'bn'] || {
+  }[language as 'hi' | 'en' | 'mr' | 'bn'] || {
     tag: 'Your Digital Companion',
     title: 'Welcome to Sanjeevani',
     subtitle: 'Simple, secure & helpful app for seniors and caregivers',
@@ -90,11 +93,9 @@ export function WelcomeScreen({
       className="flex min-h-screen flex-col bg-[#f8fafc] text-slate-800 pb-10 select-none"
       style={{ zoom: fontScale }}
     >
-      {/* Top Utility Header */}
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
         <Logo size="sm" />
 
-        {/* Font Resizer */}
         <div className="flex items-center gap-1.5">
           <button
             type="button"
@@ -115,9 +116,7 @@ export function WelcomeScreen({
         </div>
       </header>
 
-      {/* Main Container */}
       <main className="flex-1 max-w-md mx-auto w-full px-4 pt-6 space-y-6">
-        {/* Hero Section */}
         <div className="rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-emerald-800 p-6 text-white shadow-xl text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-emerald-100 backdrop-blur-xs">
             <Sparkles className="size-3.5 text-amber-300" />
@@ -129,7 +128,6 @@ export function WelcomeScreen({
           </p>
         </div>
 
-        {/* Language Selection Grid */}
         <div className="space-y-2.5">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
             <Globe className="size-4 text-emerald-600" />
@@ -141,9 +139,9 @@ export function WelcomeScreen({
               <button
                 key={l.code}
                 type="button"
-                onClick={() => setSelectedLang(l.code)}
+                onClick={() => setLanguage(l.code)}
                 className={`flex items-center justify-between rounded-2xl border p-3 text-left transition-all ${
-                  selectedLang === l.code
+                  language === l.code
                     ? 'border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-500'
                     : 'border-slate-200 bg-white hover:bg-slate-50'
                 }`}
@@ -152,7 +150,7 @@ export function WelcomeScreen({
                   <p className="text-sm font-black text-slate-900">{l.label}</p>
                   <p className="text-[10px] font-semibold text-slate-400">{l.sub}</p>
                 </div>
-                {selectedLang === l.code && (
+                {language === l.code && (
                   <div className="flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
                     ✓
                   </div>
@@ -162,11 +160,9 @@ export function WelcomeScreen({
           </div>
         </div>
 
-        {/* Mode Selection Heading */}
         <div className="space-y-3 pt-2">
           <p className="text-xs font-bold text-slate-700">{t.modeTitle}</p>
 
-          {/* Option 1: Senior Citizen Dashboard Mode */}
           <button
             type="button"
             onClick={onSelectElderly}
@@ -188,7 +184,6 @@ export function WelcomeScreen({
             </div>
           </button>
 
-          {/* Option 2: Voice-First Mode */}
           <button
             type="button"
             onClick={onSelectVisuallyImpaired}
@@ -211,7 +206,6 @@ export function WelcomeScreen({
           </button>
         </div>
 
-        {/* Security / Privacy Trust Badge */}
         <div className="flex items-center justify-center gap-2 pt-2 text-[11px] font-semibold text-slate-500">
           <ShieldCheck className="size-4 text-emerald-600" />
           <span>{t.secureNote}</span>
