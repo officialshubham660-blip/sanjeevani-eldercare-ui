@@ -14,12 +14,13 @@ export interface UserProfile {
   isLoggedIn?: boolean;
 }
 
+// ✅ Initial state: Not logged in (Taaki direct Login page khule)
 const DEFAULT_PROFILE: UserProfile = {
-  name: 'Ramesh Sharma',
-  age: '68',
-  city: 'Delhi',
-  avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150',
-  isLoggedIn: true,
+  name: '',
+  age: '',
+  city: '',
+  avatar: '',
+  isLoggedIn: false,
 };
 
 const DEFAULT_MEDS: MedicineItem[] = [
@@ -87,12 +88,12 @@ export const setStoredMeds = (meds: MedicineItem[]) => {
 };
 
 export const getStoredWater = (): number => {
-  if (typeof window === 'undefined') return 4;
+  if (typeof window === 'undefined') return 0;
   try {
     const data = localStorage.getItem('sanjeevani_water');
-    return data !== null ? Number(data) : 4;
+    return data !== null ? Number(data) : 0;
   } catch {
-    return 4;
+    return 0;
   }
 };
 
