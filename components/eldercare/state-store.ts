@@ -11,17 +11,39 @@ export interface UserProfile {
   age: string;
   city: string;
   avatar: string;
+  isLoggedIn?: boolean;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
-  name: '',
-  age: '',
-  city: '',
-  avatar: '',
+  name: 'Ramesh Sharma',
+  age: '68',
+  city: 'Delhi',
+  avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150',
+  isLoggedIn: true,
 };
 
 const DEFAULT_MEDS: MedicineItem[] = [
-   
+  {
+    id: 1,
+    name: 'Metformin',
+    dosage: '500mg - 1 Tablet',
+    time: '08:00 AM',
+    taken: false,
+  },
+  {
+    id: 2,
+    name: 'Amlodipine',
+    dosage: '5mg - 1 Tablet',
+    time: '01:00 PM',
+    taken: false,
+  },
+  {
+    id: 3,
+    name: 'Atorvastatin',
+    dosage: '10mg - 1 Tablet',
+    time: '08:30 PM',
+    taken: false,
+  },
 ];
 
 export const getStoredProfile = (): UserProfile => {
@@ -36,9 +58,13 @@ export const getStoredProfile = (): UserProfile => {
 
 export const setStoredProfile = (profile: Partial<UserProfile>) => {
   if (typeof window === 'undefined') return;
-  const current = getStoredProfile();
-  const updated = { ...current, ...profile };
-  localStorage.setItem('sanjeevani_user_profile', JSON.stringify(updated));
+  try {
+    const current = getStoredProfile();
+    const updated = { ...current, ...profile };
+    localStorage.setItem('sanjeevani_user_profile', JSON.stringify(updated));
+  } catch (error) {
+    console.error('Failed to set profile:', error);
+  }
 };
 
 export const getStoredMeds = (): MedicineItem[] => {
@@ -53,20 +79,28 @@ export const getStoredMeds = (): MedicineItem[] => {
 
 export const setStoredMeds = (meds: MedicineItem[]) => {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('sanjeevani_meds', JSON.stringify(meds));
+  try {
+    localStorage.setItem('sanjeevani_meds', JSON.stringify(meds));
+  } catch (error) {
+    console.error('Failed to set meds:', error);
+  }
 };
 
 export const getStoredWater = (): number => {
-  if (typeof window === 'undefined') return 0;
+  if (typeof window === 'undefined') return 4;
   try {
     const data = localStorage.getItem('sanjeevani_water');
-    return data ? Number(data) : 0;
+    return data !== null ? Number(data) : 4;
   } catch {
-    return 0;
+    return 4;
   }
 };
 
 export const setStoredWater = (glasses: number) => {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('sanjeevani_water', String(glasses));
+  try {
+    localStorage.setItem('sanjeevani_water', String(glasses));
+  } catch (error) {
+    console.error('Failed to set water:', error);
+  }
 };
