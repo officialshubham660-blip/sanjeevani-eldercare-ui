@@ -285,7 +285,8 @@ function ScreenSwitcherContent() {
         )}
 
         {active === 3 && (
-          <VisuallyImpairedRegistrationScreen
+          <VisuallyImpairedRegistrationScreen 
+          language={language}
             onBack={() => setActive(1)}
             onContinue={(mode) => {
               if (mode === 'voice') setActive(4);
@@ -364,7 +365,8 @@ function ScreenSwitcherContent() {
         )}
 
         {active === 11 && (
-          <AppointmentsScreen
+          <AppointmentsScreen 
+          language={language}
             appointments={appointments}
             setAppointments={setAppointments}
             onBack={() => setActive(6)}
@@ -390,6 +392,8 @@ function ScreenSwitcherContent() {
         {active === 14 && (
           <FamilyHubScreen
             language={language}
+            emergencyContactsCount={contactsCount}
+            setEmergencyContactsCount={setContactsCount}
             onBack={() => setActive(6)}
           />
         )}
@@ -433,7 +437,7 @@ function ScreenSwitcherContent() {
 
 export function ScreenSwitcher() {
   return (
-    <TalkBackProvider>
+    <TalkBackProvider language="hi">
       <ScreenSwitcherContent />
     </TalkBackProvider>
   );
