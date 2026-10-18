@@ -138,20 +138,19 @@ const COPY: Record<
     feelingToday: 'আজ আপনার কেমন লাগছে?',
   },
 };
-
 export function DashboardScreen({
-  language,
-  waterCount,
-  medicineCount,
-  appointmentText,
-  contactsCount,
-  onOpenVoice,
-  onNavigate,
-}: DashboardScreenProps) {
-  const t = COPY[language] ?? COPY.hi;
-  const upcomingCount = Number(appointmentText.match(/\d+/)?.[0] ?? 0);
+  language = 'hi',
+  waterCount = 0,
+  medicineCount = 0,
+  appointmentText = '',
+  contactsCount = 0,
+  onOpenVoice = () => {},
+  onNavigate = () => {},
+}: Partial<DashboardScreenProps>) {
+  const t = COPY[language] ?? COPY.hi ?? COPY.en ?? {};
+  const upcomingCount = Number((appointmentText || '').match(/\d+/)?.[0] ?? 0);
 
-  let appointmentLabel = t.noAppointments;
+  let appointmentLabel = t?.noAppointments ?? 'No Appointments';
 
   if (upcomingCount > 0) {
     if (language === 'en') {

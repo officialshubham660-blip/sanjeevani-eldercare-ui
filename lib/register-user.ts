@@ -32,12 +32,19 @@ export async function registerUser(input: RegistrationInput): Promise<{ error: s
   const mobileNumber = input.mobileNumber.replace(/\s+/g, '')
   const dateOfBirth = parseDob(input.dateOfBirth)
 
-  if (fullName.length < 2 || fullName.length > 100) return { error: 'Please enter your full name.' }
-  if (!/^[0-9]{10}$/.test(mobileNumber)) return { error: 'Please enter a valid 10-digit mobile number.' }
-  if (!dateOfBirth) return { error: 'Please enter a valid date of birth as DD/MM/YYYY.' }
+  if (fullName.length < 2 || fullName.length > 100) {
+    return { error: 'Please enter your full name.' }
+  }
+  if (!/^[0-9]{10}$/.test(mobileNumber)) {
+    return { error: 'Please enter a valid 10-digit mobile number.' }
+  }
+  if (!dateOfBirth) {
+    return { error: 'Please enter a valid date of birth as DD/MM/YYYY.' }
+  }
 
   try {
-    const { error, status } = await createClient().from('users').insert({
+    const client = createClient()
+    const { error, status } = await client.from('users').insert({
       full_name: fullName,
       mobile_number: mobileNumber,
       date_of_birth: dateOfBirth,
@@ -45,14 +52,13 @@ export async function registerUser(input: RegistrationInput): Promise<{ error: s
     })
 
     if (error) {
-      console.error(`Supabase insert into users failed (${getSupabaseHost()}, HTTP ${status}):`, error)
-      return { error: `Could not save your details: ${error.message}${error.code ? ` (code ${error.code})` : ''}` }
+      console.warn(`Supabase insert warning (${getSupabaseHost()}, status ${status}):`, error)
+      return { error: `Could not save your details: ${error.message}` }
     }
-    console.log(`Supabase insert into users succeeded (${getSupabaseHost()}, HTTP ${status})`)
     return { error: null }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
-    console.error(`Supabase request to ${getSupabaseHost()} threw:`, err)
-    return { error: `Could not reach the database: ${message}` }
+    console.warn(`Supabase connection error for ${getSupabaseHost()}:`, message)
+    return { error: `Database service temporarily unavailable: ${message}` }
   }
 }
