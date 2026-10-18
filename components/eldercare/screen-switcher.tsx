@@ -99,6 +99,7 @@ function ScreenSwitcherContent() {
   const [appointments, setAppointments] =
     useState<AppointmentItem[]>(INITIAL_APPOINTMENTS);
   const [contactsCount, setContactsCount] = useState<number>(0);
+  const [emergencyContacts, setEmergencyContacts] = useState<any[]>([]);
 
   const upcomingAppointmentCount = appointments.filter(
     (appointment) => appointment.status === 'upcoming'
@@ -392,8 +393,8 @@ function ScreenSwitcherContent() {
         {active === 14 && (
           <FamilyHubScreen
             language={language}
-            emergencyContactsCount={contactsCount}
-            setEmergencyContactsCount={setContactsCount}
+            emergencyContacts={emergencyContacts}
+            setEmergencyContacts={setEmergencyContacts}
             onBack={() => setActive(6)}
           />
         )}
